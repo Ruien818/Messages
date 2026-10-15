@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Luton Workspace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+    
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: linear-gradient(135deg, #f0f3ff 0%, #e5ecff 50%, #f5efff 100%);
+      min-height: 100vh;
+      color: #1e1b4b;
+    }
+
+    .dark body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #2e1065 100%);
+      color: #f8fafc;
+    }
+
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.45);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+    }
+
+    .dark .glass-panel {
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .dark .glass-card {
+      background: rgba(30, 41, 59, 0.5);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .glass-card:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 20px 30px -10px rgba(99, 102, 241, 0.2);
+    }
+
+    .glass-modal {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+    }
+
+    .dark .glass-modal {
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(156, 163, 175, 0.3);
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body class="transition-colors duration-300 antialiased selection:bg-indigo-500 selection:text-white">
+
+  <!-- Background Decor -->
+  <div class="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+    <div class="absolute -top-40 -left-40 w-96 h-96 bg-purple-300 dark:bg-purple-900/40 rounded-full blur-3xl opacity-50"></div>
+    <div class="absolute top-1/3 -right-40 w-96 h-96 bg-blue-300 dark:bg-blue-900/40 rounded-full blur-3xl opacity-50"></div>
+    <div class="absolute -bottom-40 left-1/3 w-96 h-96 bg-indigo-300 dark:bg-indigo-900/40 rounded-full blur-3xl opacity-50"></div>
+  </div>
+
+  <!-- SIGN-IN / AUTH SCREEN -->
+  <div id="authScreen" class="fixed inset-0 z-50 flex items-center justify-center p-6 backdrop-blur-md bg-slate-900/20">
+    <div class="glass-modal w-full max-w-md rounded-3xl p-8 shadow-2xl border border-white/60 dark:border-white/10 relative">
+      <div class="flex flex-col items-center mb-8">
+        <div class="w-16 h-16 rounded-3xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center text-white font-extrabold text-3xl shadow-xl shadow-indigo-500/30 mb-4">
+          L
+        </div>
+        <h1 class="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400">
+          Sign in to Luton
+        </h1>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Local Workspace Account</p>
+      </div>
+
+      <form onsubmit="handleAuthSubmit(event)" class="space-y-4">
+        <div>
+          <label class="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider block mb-1">Email or Username</label>
+          <input id="authEmail" type="text" required placeholder="user@localhost" class="w-full px-4 py-3 rounded-2xl bg-white/60 dark:bg-slate-800/60 border border-slate-200/50 dark:border-slate-700/50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm text-slate-800 dark:text-white">
+        </div>
+        <div>
+          <label class="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider block mb-1">Password</label>
+          <input id="authPassword" type="password" required placeholder="••••••••" class="w-full px-4 py-3 rounded-2xl bg-white/60 dark:bg-slate-800/60 border border-slate-200/50 dark:border-slate-700/50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm text-slate-800 dark:text-white">
+        </div>
+
+        <button type="submit" class="w-full py-3.5 mt-2 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold text-sm transition shadow-lg shadow-indigo-500/25">
+          Sign In
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MAIN DASHBOARD CONTENT -->
+  <div id="mainDashboard" class="hidden min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="w-full px-8 py-6 flex justify-between items-center z-10 relative">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-indigo-500/30">
+          L
+        </div>
+        <span class="text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400">
+          Luton
+        </span>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <button onclick="openModal('accountModal')" class="flex items-center gap-3 glass-panel px-4 py-2 rounded-2xl hover:bg-white/60 dark:hover:bg-slate-800/60 transition">
+          <div class="text-right hidden sm:block">
+            <p id="displayUserName" class="text-xs font-semibold text-slate-800 dark:text-slate-200">User Account</p>
+            <p id="displayUserEmail" class="text-[10px] text-slate-500 dark:text-slate-400">user@localhost</p>
+          </div>
+          <div id="displayUserAvatar" class="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white font-medium text-xs shadow">
+            U
+          </div>
+        </button>
+
+        <button id="themeToggle" class="glass-panel p-2.5 rounded-2xl hover:bg-white/60 dark:hover:bg-slate-800/60 transition text-slate-700 dark:text-slate-200">
+          <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
+          <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Body -->
+    <main class="max-w-6xl mx-auto px-6 py-8 flex-1 flex flex-col items-center">
+      <div class="text-center mb-12 animate-fade-in">
+        <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-3 text-slate-900 dark:text-white">
+          Welcome to Luton
+        </h1>
+        <p class="text-slate-500 dark:text-slate-400 text-sm md:text-base max-w-md mx-auto">
+          Your unified workspace dashboard. Privacy, productivity, and local AI at your fingertips.
+        </p>
+      </div>
+
+      <!-- App Launcher Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 w-full max-w-4xl mb-16">
+        
+        <button onclick="openModal('passModal')" class="glass-card p-5 rounded-3xl flex flex-col items-center justify-center gap-3 group relative">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-400 to-orange-500 flex items-center justify-center text-white shadow-lg shadow-orange-500/20 group-hover:scale-110 transition">
+            <i data-lucide="key-round" class="w-7 h-7"></i>
+          </div>
+          <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Pass</span>
+        </button>
+
+        <button onclick="openModal('notesModal')" class="glass-card p-5 rounded-3xl flex flex-col items-center justify-center gap-3 group relative">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-400 to-teal-600 flex items-center justify-center text-white shadow-lg shadow-teal-500/20 group-hover:scale-110 transition">
+            <i data-lucide="notebook-pen" class="w-7 h-7"></i>
+          </div>
+          <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Notes</span>
+        </button>
+
+        <button onclick="openModal('lumoModal')" class="glass-card p-5 rounded-3xl flex flex-col items-center justify-center gap-3 group relative">
+          <span class="absolute -top-2 right-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow">LM Studio</span>
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-purple-500 via-indigo-500 to-pink-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20 group-hover:scale-110 transition">
+            <i data-lucide="sparkles" class="w-7 h-7"></i>
+          </div>
+          <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Lumo AI</span>
+        </button>
+
+        <button onclick="openModal('driveModal')" class="glass-card p-5 rounded-3xl flex flex-col items-center justify-center gap-3 group relative">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-500 to-cyan-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/20 group-hover:scale-110 transition">
+            <i data-lucide="folder" class="w-7 h-7"></i>
+          </div>
+          <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Drive</span>
+        </button>
+
+        <button onclick="openModal('docsModal')" class="glass-card p-5 rounded-3xl flex flex-col items-center justify-center gap-3 group relative">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20 group-hover:scale-110 transition">
+            <i data-lucide="file-text" class="w-7 h-7"></i>
+          </div>
+          <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Docs</span>
+        </button>
+
+        <button onclick="openModal('sheetsModal')" class="glass-card p-5 rounded-3xl flex flex-col items-center justify-center gap-3 group relative">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-500 to-green-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20 group-hover:scale-110 transition">
+            <i data-lucide="table" class="w-7 h-7"></i>
+          </div>
+          <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Sheets</span>
+        </button>
+
+        <button onclick="openModal('meetModal')" class="glass-card p-5 rounded-3xl flex flex-col items-center justify-center gap-3 group relative">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-rose-500 to-red-600 flex items-center justify-center text-white shadow-lg shadow-rose-500/20 group-hover:scale-110 transition">
+            <i data-lucide="video" class="w-7 h-7"></i>
+          </div>
+          <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Meet</span>
+        </button>
+
+        <button onclick="openModal('walletModal')" class="glass-card p-5 rounded-3xl flex flex-col items-center justify-center gap-3 group relative">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-violet-600 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-purple-500/20 group-hover:scale-110 transition">
+            <i data-lucide="wallet" class="w-7 h-7"></i>
+          </div>
+          <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Wallet</span>
+        </button>
+
+        <button onclick="openModal('mailModal')" class="glass-card p-5 rounded-3xl flex flex-col items-center justify-center gap-3 group relative">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-500 to-sky-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20 group-hover:scale-110 transition">
+            <i data-lucide="mail" class="w-7 h-7"></i>
+          </div>
+          <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Mail</span>
+        </button>
+
+        <button onclick="openModal('calendarModal')" class="glass-card p-5 rounded-3xl flex flex-col items-center justify-center gap-3 group relative">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-sky-400 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/20 group-hover:scale-110 transition">
+            <i data-lucide="calendar" class="w-7 h-7"></i>
+          </div>
+          <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Calendar</span>
+        </button>
+
+      </div>
+
+      <button onclick="openModal('settingsModal')" class="glass-panel px-6 py-2.5 rounded-full flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-white/80 dark:hover:bg-slate-800/80 transition">
+        <i data-lucide="settings" class="w-4 h-4"></i>
+        <span>Settings</span>
+      </button>
+    </main>
+  </div>
+
+  <!-- MODALS -->
+
+  <!-- Account Modal / Switcher -->
+  <div id="accountModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden">
+    <div class="glass-modal w-full max-w-md rounded-3xl p-6 shadow-2xl relative">
+      <button onclick="closeModal('accountModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+      <h2 class="text-xl font-bold mb-4 text-slate-800 dark:text-white">User Account</h2>
+      
+      <div class="space-y-3">
+        <div class="flex items-center justify-between p-4 rounded-2xl bg-white/50 dark:bg-slate-800/50 border border-slate-200/50 dark:border-slate-700/50">
+          <div class="flex items-center gap-3">
+            <div id="modalUserAvatar" class="w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold">U</div>
+            <div>
+              <p id="modalUserName" class="text-sm font-semibold text-slate-800 dark:text-slate-200">Local User</p>
+              <p id="modalUserEmail" class="text-xs text-slate-500 dark:text-slate-400">user@localhost</p>
+            </div>
+          </div>
+          <i data-lucide="check" class="w-5 h-5 text-indigo-600 dark:text-indigo-400"></i>
+        </div>
+      </div>
+
+      <button onclick="handleSignOut()" class="w-full mt-6 py-3 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-medium text-sm transition shadow-lg shadow-rose-500/20 flex items-center justify-center gap-2">
+        <i data-lucide="log-out" class="w-4 h-4"></i> Sign Out
+      </button>
+    </div>
+  </div>
+
+  <!-- LUMO AI MODAL (LM STUDIO) -->
+  <div id="lumoModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden">
+    <div class="glass-modal w-full max-w-2xl h-[80vh] rounded-3xl p-6 shadow-2xl relative flex flex-col">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-200/50 dark:border-slate-700/50">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-500 to-indigo-600 flex items-center justify-center text-white">
+            <i data-lucide="sparkles" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-800 dark:text-white">Lumo AI</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
+              <span id="lmStatusDot" class="w-2 h-2 rounded-full bg-amber-500"></span>
+              <span id="lmStatusText">Connecting to localhost:1234...</span>
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="clearChat()" class="text-xs px-3 py-1.5 rounded-lg bg-slate-200/50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition">Clear</button>
+          <button onclick="closeModal('lumoModal')" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="chatContainer" class="flex-1 overflow-y-auto my-4 space-y-4 pr-2 custom-scrollbar">
+        <div class="flex gap-3">
+          <div class="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center text-white text-xs shrink-0">AI</div>
+          <div class="glass-panel p-3.5 rounded-2xl rounded-tl-none max-w-[80%] text-sm text-slate-800 dark:text-slate-200">
+            Hello! I am Lumo AI, connected to your local LM Studio server (`localhost:1234`). Ask me anything!
+          </div>
+        </div>
+      </div>
+
+      <form onsubmit="handleChatSubmit(event)" class="flex gap-2 pt-2 border-t border-slate-200/50 dark:border-slate-700/50">
+        <input id="chatInput" type="text" placeholder="Type a prompt to LM Studio..." class="flex-1 px-4 py-3 rounded-xl bg-white/50 dark:bg-slate-800/50 border border-slate-200/50 dark:border-slate-700/50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm text-slate-800 dark:text-white">
+        <button type="submit" class="px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm transition shadow-lg shadow-indigo-500/20 flex items-center gap-2">
+          <i data-lucide="send" class="w-4 h-4"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- NOTES APP MODAL -->
+  <div id="notesModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden">
+    <div class="glass-modal w-full max-w-3xl h-[80vh] rounded-3xl p-6 shadow-2xl relative flex flex-col">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-200/50 dark:border-slate-700/50">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-400 to-teal-600 flex items-center justify-center text-white">
+            <i data-lucide="notebook-pen" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-800 dark:text-white">Luton Notes</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Local persistent notepad</p>
+          </div>
+        </div>
+        <button onclick="closeModal('notesModal')" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="flex-1 flex gap-4 overflow-hidden mt-4">
+        <div class="w-1/3 flex flex-col border-r border-slate-200/50 dark:border-slate-700/50 pr-4">
+          <button onclick="createNewNote()" class="w-full py-2.5 mb-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs flex items-center justify-center gap-2 transition shadow">
+            <i data-lucide="plus" class="w-4 h-4"></i> New Note
+          </button>
+          <div id="notesList" class="flex-1 overflow-y-auto space-y-2 custom-scrollbar"></div>
+        </div>
+
+        <div class="flex-1 flex flex-col gap-3">
+          <input id="noteTitle" type="text" placeholder="Note Title..." oninput="saveCurrentNote()" class="w-full text-lg font-bold bg-transparent border-b border-slate-200/50 dark:border-slate-700/50 pb-2 focus:outline-none text-slate-800 dark:text-white">
+          <textarea id="noteBody" placeholder="Start typing your note here..." oninput="saveCurrentNote()" class="flex-1 w-full bg-transparent resize-none focus:outline-none text-sm text-slate-700 dark:text-slate-200 custom-scrollbar"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS MODAL -->
+  <div id="settingsModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden">
+    <div class="glass-modal w-full max-w-md rounded-3xl p-6 shadow-2xl relative">
+      <button onclick="closeModal('settingsModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+      <h2 class="text-xl font-bold mb-4 text-slate-800 dark:text-white">Dashboard Settings</h2>
+      
+      <div class="space-y-4">
+        <div>
+          <label class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">LM Studio Endpoint</label>
+          <input type="text" value="http://localhost:1234" readonly class="w-full mt-1 px-4 py-2.5 rounded-xl bg-white/50 dark:bg-slate-800/50 border border-slate-200/50 dark:border-slate-700/50 text-sm text-slate-700 dark:text-slate-300">
+        </div>
+        
+        <div>
+          <label class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Appearance</label>
+          <div class="flex gap-3 mt-2">
+            <button onclick="setTheme('light')" class="flex-1 py-2 rounded-xl border border-slate-200/50 dark:border-slate-700/50 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-white/50">Light</button>
+            <button onclick="setTheme('dark')" class="flex-1 py-2 rounded-xl border border-slate-200/50 dark:border-slate-700/50 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-white/50">Dark</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GENERIC APP PLACEHOLDER MODAL -->
+  <div id="genericModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden">
+    <div class="glass-modal w-full max-w-md rounded-3xl p-6 shadow-2xl relative text-center">
+      <button onclick="closeModal('genericModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+      <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto mb-3">
+        <i data-lucide="app-window" class="w-6 h-6"></i>
+      </div>
+      <h3 id="genericModalTitle" class="text-lg font-bold text-slate-800 dark:text-white">Luton App</h3>
+      <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">This app module is ready for host integration on your local environment.</p>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    lucide.createIcons();
+
+    // AUTH & SESSION STATE
+    function checkSession() {
+      const savedUser = localStorage.getItem('luton_session_user');
+      if (savedUser) {
+        const user = JSON.parse(savedUser);
+        document.getElementById('authScreen').classList.add('hidden');
+        document.getElementById('mainDashboard').classList.remove('hidden');
+        
+        // Update header user info
+        document.getElementById('displayUserName').innerText = user.name || 'User Account';
+        document.getElementById('displayUserEmail').innerText = user.email;
+        document.getElementById('displayUserAvatar').innerText = (user.name || user.email)[0].toUpperCase();
+        
+        // Update modal user info
+        document.getElementById('modalUserName').innerText = user.name || 'User Account';
+        document.getElementById('modalUserEmail').innerText = user.email;
+        document.getElementById('modalUserAvatar').innerText = (user.name || user.email)[0].toUpperCase();
+      } else {
+        document.getElementById('authScreen').classList.remove('hidden');
+        document.getElementById('mainDashboard').classList.add('hidden');
+      }
+    }
+
+    function handleAuthSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('authEmail').value.trim();
+      const name = email.split('@')[0];
+      const userData = { email, name };
+      localStorage.setItem('luton_session_user', JSON.stringify(userData));
+      checkSession();
+    }
+
+    function handleSignOut() {
+      localStorage.removeItem('luton_session_user');
+      closeModal('accountModal');
+      checkSession();
+    }
+
+    // THEME CONTROLLER
+    function setTheme(theme) {
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+      }
+    }
+
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      if (document.documentElement.classList.contains('dark')) setTheme('light');
+      else setTheme('dark');
+    });
+
+    if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      setTheme('dark');
+    } else {
+      setTheme('light');
+    }
+
+    // MODAL CONTROL
+    function openModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        modal.classList.remove('hidden');
+        if (modalId === 'lumoModal') checkLMStudioConnection();
+      } else {
+        document.getElementById('genericModalTitle').innerText = modalId.replace('Modal', '').toUpperCase();
+        document.getElementById('genericModal').classList.remove('hidden');
+      }
+    }
+
+    function closeModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) modal.classList.add('hidden');
+    }
+
+    // LM STUDIO INTEGRATION
+    const LM_STUDIO_URL = "http://localhost:1234/v1/chat/completions";
+
+    async function checkLMStudioConnection() {
+      const dot = document.getElementById('lmStatusDot');
+      const text = document.getElementById('lmStatusText');
+      try {
+        const res = await fetch("http://localhost:1234/v1/models");
+        if (res.ok) {
+          dot.className = "w-2 h-2 rounded-full bg-emerald-500";
+          text.innerText = "Connected to LM Studio (localhost:1234)";
+        } else throw new Error();
+      } catch (err) {
+        dot.className = "w-2 h-2 rounded-full bg-rose-500";
+        text.innerText = "Disconnected (Ensure LM Studio server is running on port 1234)";
+      }
+    }
+
+    async function handleChatSubmit(e) {
+      e.preventDefault();
+      const input = document.getElementById('chatInput');
+      const container = document.getElementById('chatContainer');
+      const prompt = input.value.trim();
+
+      if (!prompt) return;
+
+      container.innerHTML += `
+        <div class="flex gap-3 justify-end">
+          <div class="bg-indigo-600 text-white p-3.5 rounded-2xl rounded-tr-none max-w-[80%] text-sm">
+            ${escapeHtml(prompt)}
+          </div>
+        </div>
+      `;
+      input.value = '';
+      container.scrollTop = container.scrollHeight;
+
+      const aiMsgId = 'msg-' + Date.now();
+      container.innerHTML += `
+        <div class="flex gap-3">
+          <div class="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center text-white text-xs shrink-0">AI</div>
+          <div id="${aiMsgId}" class="glass-panel p-3.5 rounded-2xl rounded-tl-none max-w-[80%] text-sm text-slate-800 dark:text-slate-200">
+            <span class="animate-pulse">Thinking...</span>
+          </div>
+        </div>
+      `;
+      container.scrollTop = container.scrollHeight;
+
+      try {
+        const response = await fetch(LM_STUDIO_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            messages: [{ role: 'user', content: prompt }],
+            temperature: 0.7
+          })
+        });
+
+        if (!response.ok) throw new Error();
+
+        const data = await response.json();
+        const reply = data.choices[0].message.content;
+        document.getElementById(aiMsgId).innerText = reply;
+
+      } catch (error) {
+        document.getElementById(aiMsgId).innerHTML = `<span class="text-rose-500">Could not communicate with local model. Ensure LM Studio server is running on http://localhost:1234</span>`;
+      }
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function clearChat() {
+      document.getElementById('chatContainer').innerHTML = `
+        <div class="flex gap-3">
+          <div class="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center text-white text-xs shrink-0">AI</div>
+          <div class="glass-panel p-3.5 rounded-2xl rounded-tl-none max-w-[80%] text-sm text-slate-800 dark:text-slate-200">
+            Chat cleared. How can I help you?
+          </div>
+        </div>
+      `;
+    }
+
+    // LOCAL NOTES APP
+    let notes = JSON.parse(localStorage.getItem('luton_notes') || '[{"id":1,"title":"Welcome Note","body":"Welcome to Luton Notes! Your content automatically saves locally."}]');
+    let activeNoteId = notes[0]?.id || null;
+
+    function renderNotesList() {
+      const list = document.getElementById('notesList');
+      list.innerHTML = '';
+      notes.forEach(note => {
+        const item = document.createElement('div');
+        item.className = `p-2.5 rounded-xl text-xs cursor-pointer flex justify-between items-center transition ${note.id === activeNoteId ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-semibold' : 'hover:bg-slate-200/50 dark:hover:bg-slate-800/50 text-slate-600 dark:text-slate-300'}`;
+        item.onclick = () => selectNote(note.id);
+        item.innerHTML = `
+          <span class="truncate max-w-[120px]">${escapeHtml(note.title || 'Untitled')}</span>
+          <button onclick="deleteNote(event, ${note.id})" class="text-slate-400 hover:text-rose-500 p-1">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+          </button>
+        `;
+        list.appendChild(item);
+      });
+      lucide.createIcons();
+    }
+
+    function selectNote(id) {
+      activeNoteId = id;
+      const note = notes.find(n => n.id === id);
+      if (note) {
+        document.getElementById('noteTitle').value = note.title;
+        document.getElementById('noteBody').value = note.body;
+      }
+      renderNotesList();
+    }
+
+    function createNewNote() {
+      const newNote = { id: Date.now(), title: 'New Note', body: '' };
+      notes.unshift(newNote);
+      activeNoteId = newNote.id;
+      saveNotesToStorage();
+      selectNote(newNote.id);
+    }
+
+    function saveCurrentNote() {
+      if (!activeNoteId) return;
+      const note = notes.find(n => n.id === activeNoteId);
+      if (note) {
+        note.title = document.getElementById('noteTitle').value;
+        note.body = document.getElementById('noteBody').value;
+        saveNotesToStorage();
+        renderNotesList();
+      }
+    }
+
+    function deleteNote(e, id) {
+      e.stopPropagation();
+      notes = notes.filter(n => n.id !== id);
+      if (activeNoteId === id) activeNoteId = notes[0]?.id || null;
+      saveNotesToStorage();
+      if (activeNoteId) selectNote(activeNoteId);
+      else {
+        document.getElementById('noteTitle').value = '';
+        document.getElementById('noteBody').value = '';
+        renderNotesList();
+      }
+    }
+
+    function saveNotesToStorage() {
+      localStorage.setItem('luton_notes', JSON.stringify(notes));
+    }
+
+    function escapeHtml(text) {
+      return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    // INITIALIZE
+    checkSession();
+    if (activeNoteId) selectNote(activeNoteId);
+    renderNotesList();
+  </script>
+</body>
+</html>
